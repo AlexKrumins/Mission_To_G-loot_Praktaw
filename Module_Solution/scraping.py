@@ -17,7 +17,8 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
-        "last_modified": dt.datetime.now()
+        "last_modified": dt.datetime.now(),
+        "hemispheres": hemispheresScraper(browser)
     }
 
     # Stop webdriver and return data
@@ -100,3 +101,31 @@ if __name__ == "__main__":
 
     # If running as script, print scraped data
     print(scrape_all())
+
+def hemispheresScraper():
+    url = 'https://marshemispheres.com/'
+    browser.visit(url)
+
+    hemisphere_image_urls = []
+    for i in range(4):
+        hemisphereObject = {};
+        
+        ##click on the hemisphere link
+        browser.find_by_tag('h3')[i].click();
+        
+        ##grab the image URL
+        imgURL = browser.find_by_text('Sample')[0]['href'];
+        
+        ##scrape the title
+        fullTitle = browser.find_by_css('h2').text;
+        
+        ##remove " Enhanced" from the title string
+        properTitle = fullTitle.replace(' Enhanced','');
+        
+        ##populate object and push to array
+        hemisphereObject['title'] = properTitle;
+        hemisphereObject['img_url'] = imgURL;
+        hemisphere_image_urls.append(hemisphereObject);
+        
+        browser.back();
+    return hemisphere_image_urls;
